@@ -38,9 +38,7 @@ const App = () => {
       <View style={styles.row}>
   <View style={[styles.box, { backgroundColor: '#FF6F61' }]}>
     <Text style={styles.title}>รหัส</Text>
-    <Text style={styles.value} numberOfLines={1}>
-      66111534
-    </Text>
+    <Text style={styles.title}> 66111534 </Text>
   </View>
 
   <View style={[styles.box, { backgroundColor: '#6B5B95' }]}>
