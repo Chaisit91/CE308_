@@ -16,22 +16,22 @@ import { blue } from 'react-native-reanimated/lib/typescript/Colors';
 // ];
 
 const likeData = [
-  { id: '1', title: 'พัฒนา Wepapplication' },
-  { id: '2', title: 'ดู Youtube' },
-  { id: '3', title: 'ดู Tiktok' },
+  { id: '1', title: '  dev' },
+  { id: '2', title: 'ดูหนัง' },
+  { id: '3', title: 'ฟังเพลง' },
   { id: '4', title: 'ฟุตบอล' },
 ];
 
 const dontLikeData = [
-  { id: '1', title: 'สัตว์เลื้อยคลาน' },
-  { id: '2', title: 'คนเอาเปรียบ' },
+  { id: '1', title: 'เล่นเกม' },
+  { id: '2', title: 'นอนหลับ' },
 ];
 
 const profileData = [
-  { id: 'ชื่อ', title: 'วุฒิพงศ์  จงกสิกรรม' },
+  { id: 'ชื่อ', title: 'ชัยสิทธิ์' },
   { id: 'ชื่อเล่น', title: 'พี' },
-  { id: 'อีเมล', title: 'wutthipong210wtp@gmail.com' },
-  { id: 'เบอร์โทร', title: '095-4713848' },
+  { id: 'อีเมล', title: 'หมัดอาเด็น' },
+  { id: 'เบอร์โทร', title: '082-971-7612' },
 ];
 
 const educationData = [
@@ -60,7 +60,7 @@ const App = () => {
       <View style={styles.row}>
         <View style={[styles.box, { backgroundColor: '#FF6B6B'}]}>
           <Text style={styles.boxText}>รหัส</Text>
-          <Text style={styles.boxText}>66112189</Text>
+          <Text style={styles.boxText}>66111534</Text>
         </View>
         <View style={[styles.box, {backgroundColor: '#4ECDC4'}]}>
           <Text style={styles.boxText}>คณะ</Text>
@@ -102,7 +102,7 @@ const App = () => {
       <View style={styles.contentSection}>
         <Text style={styles.title}>ที่อยู่:</Text>
         <View style={styles.listItem}>
-            <Text>41 หมู่ 7 ตำบลคลองขวาง อำเภอไทรน้อย จังหวัดนนทบุรี 11150</Text>
+            <Text>114/31 หมู่2 ต.พิมลราช อ.บางบัวทอง จ.นนทบุรี 11110</Text>
         </View>
       </View>
 
