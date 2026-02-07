@@ -29,7 +29,7 @@ const dontLikeData = [
 
 const profileData = [
   { id: 'ชื่อ', title: 'ชัยสิทธิ์' },
-  { id: 'ชื่อเล่น', title: 'พี' },
+  { id: 'ชื่อเล่น', title: 'บาส' },
   { id: 'อีเมล', title: 'หมัดอาเด็น' },
   { id: 'เบอร์โทร', title: '082-971-7612' },
 ];
