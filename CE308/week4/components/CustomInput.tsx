@@ -1,28 +1,37 @@
 import { View, Text, TextInput } from "react-native";
 
-type Props = {
+type CustomInputProps = {
   label: string;
   value: string;
-  placeholder?: string;
   onChangeText: (text: string) => void;
+  placeholder?: string;
 };
 
-export default function CustomInput({
+export const CustomInput = ({
   label,
   value,
-  placeholder,
   onChangeText,
-}: Props) {
+  placeholder,
+}: CustomInputProps) => {
   return (
-    <View className="mb-4">
-      <Text className="mb-1 font-semibold">{label}</Text>
+    <View className="mb-4 w-full">
+      <Text className="mb-1 text-gray-700 font-medium">
+        {label}
+      </Text>
 
       <TextInput
-        className="border border-gray-300 rounded-lg px-3 py-2 bg-white"
         value={value}
-        placeholder={placeholder}
         onChangeText={onChangeText}
+        placeholder={placeholder}
+        className="
+          border
+          border-gray-300
+          rounded-lg
+          px-3
+          py-2
+          bg-gray-100
+        "
       />
     </View>
   );
-}
+};
