@@ -1,8 +1,6 @@
 import { View, Text } from "react-native";
 import { CustomButton } from "./CustomButton";
 
-
-
 type ItemCardProps = {
   name: string;
   price: number;
@@ -11,8 +9,6 @@ type ItemCardProps = {
   btnColor: "primary" | "secondary" | "danger";
   onBuy: () => void;
 };
-
-
 
 export const ItemCard = ({
   name,
@@ -28,8 +24,13 @@ export const ItemCard = ({
         ชื่อสินค้า: {name}
       </Text>
 
-      <Text className="text-base">ราคา: {price}</Text>
-      <Text className="text-base mb-3">จำนวน: {pcs}</Text>
+      <Text className="text-base">
+        ราคา: {price}
+      </Text>
+
+      <Text className="text-base mb-3">
+        จำนวน: {pcs}
+      </Text>
 
       <CustomButton
         title="สั่งซื้อ"
