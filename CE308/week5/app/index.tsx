@@ -1,4 +1,4 @@
-import "../global.css";
+import "./global.css";
 import React, { useState } from "react";
 import {
   View,
@@ -10,8 +10,10 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+
 import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
+import Checkbox from "../components/Checkbox";
 
 interface FormData {
   fullName: string;
@@ -19,6 +21,8 @@ interface FormData {
   phone: string;
   password: string;
   confirmPassword: string;
+  address: string;
+  acceptedTerms: boolean;
 }
 
 interface FormErrors {
@@ -27,6 +31,8 @@ interface FormErrors {
   phone?: string;
   password?: string;
   confirmPassword?: string;
+  address?: string;
+  acceptedTerms?: string;
 }
 
 export default function Index() {
@@ -36,61 +42,70 @@ export default function Index() {
     phone: "",
     password: "",
     confirmPassword: "",
+    address: "",
+    acceptedTerms: false,
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
   const [isLoading, setIsLoading] = useState(false);
 
-  const validateField = (name: string, value: string): string | undefined => {
+  const validateField = (name: string, value: any): string | undefined => {
     switch (name) {
       case "fullName":
         if (!value.trim()) return "กรุณากรอกชื่อ-นามสกุล";
         if (value.trim().length < 3)
           return "ชื่อ-นามสกุลต้องมีอย่างน้อย 3 ตัวอักษร";
-        return undefined;
+        return;
 
       case "email":
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!value.trim()) return "กรุณากรอกอีเมล";
         if (!emailRegex.test(value.trim()))
           return "รูปแบบอีเมลไม่ถูกต้อง";
-        return undefined;
+        return;
 
       case "phone":
         const phoneRegex = /^0[0-9]{9}$/;
         if (!value.trim()) return "กรุณากรอกเบอร์โทรศัพท์";
         if (!phoneRegex.test(value.trim()))
           return "รูปแบบเบอร์โทรศัพท์ไม่ถูกต้อง";
-        return undefined;
+        return;
+
+      case "address":
+        if (!value.trim()) return "กรุณากรอกที่อยู่";
+        if (value.trim().length < 10)
+          return "ที่อยู่ต้องมีอย่างน้อย 10 ตัวอักษร";
+        return;
 
       case "password":
         if (!value.trim()) return "กรุณากรอกรหัสผ่าน";
         if (value.length < 6)
           return "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร";
-        return undefined;
+        return;
 
       case "confirmPassword":
         if (!value.trim()) return "กรุณายืนยันรหัสผ่าน";
         if (value !== formData.password) return "รหัสผ่านไม่ตรงกัน";
-        return undefined;
+        return;
 
-      default:
-        return undefined;
+      case "acceptedTerms":
+        if (!formData.acceptedTerms)
+          return "กรุณายอมรับข้อกำหนดและเงื่อนไข";
+        return;
     }
   };
 
-  const handleChange = (name: keyof FormData, value: string) => {
+  const handleChange = (name: keyof FormData, value: any) => {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
 
     if (touched[name]) {
-      const error = validateField(name, value);
       setErrors((prev) => ({
         ...prev,
-        [name]: error,
+        [name]: validateField(name, value),
       }));
     }
   };
@@ -101,31 +116,28 @@ export default function Index() {
       [name]: true,
     }));
 
-    const error = validateField(name, formData[name]);
     setErrors((prev) => ({
       ...prev,
-      [name]: error,
+      [name]: validateField(name, formData[name]),
     }));
   };
 
-  const validateForm = (): boolean => {
+  const validateForm = () => {
     const newErrors: FormErrors = {};
     let isValid = true;
 
     (Object.keys(formData) as Array<keyof FormData>).forEach((key) => {
       const error = validateField(key, formData[key]);
       if (error) {
-        isValid = false;
         newErrors[key] = error;
+        isValid = false;
       }
     });
 
     setErrors(newErrors);
 
-    const allTouched: { [key: string]: boolean } = {};
-    Object.keys(formData).forEach((key) => {
-      allTouched[key] = true;
-    });
+    const allTouched: any = {};
+    Object.keys(formData).forEach((k) => (allTouched[k] = true));
     setTouched(allTouched);
 
     return isValid;
@@ -135,7 +147,7 @@ export default function Index() {
     Keyboard.dismiss();
 
     if (!validateForm()) {
-      Alert.alert("ข้อมูลไม่ถูกต้อง", "กรุณาตรวจสอบข้อมูลในฟอร์มอีกครั้ง");
+      Alert.alert("ข้อมูลไม่ถูกต้อง", "กรุณาตรวจสอบข้อมูล");
       return;
     }
 
@@ -143,21 +155,7 @@ export default function Index() {
 
     setTimeout(() => {
       setIsLoading(false);
-      Alert.alert(
-        "สำเร็จ",
-        `ลงทะเบียนเรียบร้อยแล้ว\n\nชื่อ: ${formData.fullName}\nอีเมล: ${formData.email}\nเบอร์โทร: ${formData.phone}`,
-        [
-          {
-            text: "ตรวจสอบ",
-            onPress: () => console.log("Form Data:", formData),
-          },
-          {
-            text: "รีเซ็ตฟอร์ม",
-            onPress: handleReset,
-            style: "cancel",
-          },
-        ]
-      );
+      Alert.alert("สำเร็จ", "ลงทะเบียนเรียบร้อยแล้ว");
     }, 2000);
   };
 
@@ -168,7 +166,10 @@ export default function Index() {
       phone: "",
       password: "",
       confirmPassword: "",
+      address: "",
+      acceptedTerms: false,
     });
+
     setErrors({});
     setTouched({});
   };
@@ -195,6 +196,8 @@ export default function Index() {
           </View>
 
           <View className="px-6 mt-6">
+            {/* ---------- CustomInput ---------- */}
+
             <CustomInput
               label="ชื่อ-นามสกุล"
               placeholder=" ระบุชื่อและนามสกุล"
@@ -232,6 +235,22 @@ export default function Index() {
             />
 
             <CustomInput
+              label="ที่อยู่"
+              placeholder="บ้านเลขที่ ถนน แขวง/ตำบล เขต/อำเภอ จังหวัด"
+              value={formData.address}
+              onChangeText={(value) => handleChange("address", value)}
+              onBlur={() => handleBlur("address")}
+              error={errors.address}
+              touched={touched.address}
+              multiline={true}
+              maxLength={200}
+              style={{
+                height: 100,
+                textAlignVertical: "top",
+              }}
+            />
+
+            <CustomInput
               label="รหัสผ่าน"
               placeholder="อย่างน้อย 6 ตัวอักษร"
               value={formData.password}
@@ -247,13 +266,33 @@ export default function Index() {
               label="ยืนยันรหัสผ่าน"
               placeholder="ระบุรหัสผ่านอีกครั้ง"
               value={formData.confirmPassword}
-              onChangeText={(value) => handleChange("confirmPassword", value)}
+              onChangeText={(value) =>
+                handleChange("confirmPassword", value)
+              }
               onBlur={() => handleBlur("confirmPassword")}
               error={errors.confirmPassword}
               touched={touched.confirmPassword}
               secureTextEntry
               autoCapitalize="none"
             />
+
+            {/* ---------- Checkbox ---------- */}
+
+            <Checkbox
+              label="ฉันยอมรับข้อกำหนดและเงื่อนไข"
+              checked={formData.acceptedTerms}
+              onPress={() => {
+                handleChange(
+                  "acceptedTerms",
+                  !formData.acceptedTerms
+                );
+                handleBlur("acceptedTerms");
+              }}
+              error={errors.acceptedTerms}
+              touched={touched.acceptedTerms}
+            />
+
+            {/* ---------- Buttons ---------- */}
 
             <View className="mt-4 space-y-3">
               <CustomButton
@@ -271,11 +310,13 @@ export default function Index() {
               />
             </View>
 
+            
+
             <View className="mt-6 bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
               <Text className="text-blue-800 font-semibold text-base mb-2">
                 คำแนะนำ
               </Text>
-              <Text className=" text-blue-700 text-sm leading-5">
+              <Text className="text-blue-700 text-sm leading-5">
                 - กรอกข้อมูลให้ครบถ้วน{"\n"}
                 - อีเมลต้องมีรูปแบบที่ถูกต้อง{"\n"}
                 - เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก{"\n"}
