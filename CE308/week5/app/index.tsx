@@ -7,9 +7,12 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
@@ -23,6 +26,8 @@ interface FormData {
   confirmPassword: string;
   address: string;
   acceptedTerms: boolean;
+  gender: string;
+  birthDate: Date | null;
 }
 
 interface FormErrors {
@@ -33,9 +38,13 @@ interface FormErrors {
   confirmPassword?: string;
   address?: string;
   acceptedTerms?: string;
+  gender?: string;
+  birthDate?: string;
 }
 
 export default function Index() {
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
   const [formData, setFormData] = useState<FormData>({
     fullName: "",
     email: "",
@@ -44,12 +53,23 @@ export default function Index() {
     confirmPassword: "",
     address: "",
     acceptedTerms: false,
+    gender: "",
+    birthDate: null,
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
   const [isLoading, setIsLoading] = useState(false);
 
+  // ===== Format Date =====
+  const formatDate = (date: Date) => {
+    const d = date.getDate().toString().padStart(2, "0");
+    const m = (date.getMonth() + 1).toString().padStart(2, "0");
+    const y = date.getFullYear();
+    return `${d}/${m}/${y}`;
+  };
+
+  // ===== Validation =====
   const validateField = (name: string, value: any): string | undefined => {
     switch (name) {
       case "fullName":
@@ -67,9 +87,9 @@ export default function Index() {
 
       case "phone":
         const phoneRegex = /^0[0-9]{9}$/;
-        if (!value.trim()) return "กรุณากรอกเบอร์โทรศัพท์";
+        if (!value.trim()) return "กรุณากรอกเบอร์โทร";
         if (!phoneRegex.test(value.trim()))
-          return "รูปแบบเบอร์โทรศัพท์ไม่ถูกต้อง";
+          return "รูปแบบเบอร์โทรไม่ถูกต้อง";
         return;
 
       case "address":
@@ -91,16 +111,31 @@ export default function Index() {
 
       case "acceptedTerms":
         if (!formData.acceptedTerms)
-          return "กรุณายอมรับข้อกำหนดและเงื่อนไข";
+          return "กรุณายอมรับข้อกำหนด";
+        return;
+
+      case "gender":
+        if (!value) return "กรุณาเลือกเพศ";
+        return;
+
+      case "birthDate":
+        if (!value) return "กรุณาเลือกวันเกิด";
+
+        const today = new Date();
+        let age = today.getFullYear() - value.getFullYear();
+        const m = today.getMonth() - value.getMonth();
+
+        if (m < 0 || (m === 0 && today.getDate() < value.getDate())) {
+          age--;
+        }
+
+        if (age < 13) return "อายุต้องมากกว่า 13 ปี";
         return;
     }
   };
 
   const handleChange = (name: keyof FormData, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
 
     if (touched[name]) {
       setErrors((prev) => ({
@@ -111,10 +146,7 @@ export default function Index() {
   };
 
   const handleBlur = (name: keyof FormData) => {
-    setTouched((prev) => ({
-      ...prev,
-      [name]: true,
-    }));
+    setTouched((prev) => ({ ...prev, [name]: true }));
 
     setErrors((prev) => ({
       ...prev,
@@ -147,7 +179,7 @@ export default function Index() {
     Keyboard.dismiss();
 
     if (!validateForm()) {
-      Alert.alert("ข้อมูลไม่ถูกต้อง", "กรุณาตรวจสอบข้อมูล");
+      Alert.alert("ข้อมูลไม่ถูกต้อง");
       return;
     }
 
@@ -155,8 +187,8 @@ export default function Index() {
 
     setTimeout(() => {
       setIsLoading(false);
-      Alert.alert("สำเร็จ", "ลงทะเบียนเรียบร้อยแล้ว");
-    }, 2000);
+      Alert.alert("ลงทะเบียนสำเร็จ");
+    }, 1500);
   };
 
   const handleReset = () => {
@@ -168,6 +200,8 @@ export default function Index() {
       confirmPassword: "",
       address: "",
       acceptedTerms: false,
+      gender: "",
+      birthDate: null,
     });
 
     setErrors({});
@@ -180,106 +214,114 @@ export default function Index() {
       className="flex-1 bg-white"
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView
-          className="flex-1 bg-gray-50"
-          contentContainerClassName="pb-8"
-          keyboardShouldPersistTaps="handled"
-        >
-          <View className="bg-blue-600 pt-16 pb-8 px-6">
-            <Text className="text-white text-3xl font-bold">
-              ลงทะเบียนสมาชิก
-            </Text>
-
-            <Text className="text-blue-100 text-base mt-2">
-              กรุณากรอกข้อมูลให้ครบถ้วน
-            </Text>
-          </View>
-
-          <View className="px-6 mt-6">
-            {/* ---------- CustomInput ---------- */}
+        <ScrollView className="flex-1 bg-gray-50">
+          <View className="px-6 mt-10">
 
             <CustomInput
               label="ชื่อ-นามสกุล"
-              placeholder=" ระบุชื่อและนามสกุล"
               value={formData.fullName}
-              onChangeText={(text) => handleChange("fullName", text)}
+              onChangeText={(v) => handleChange("fullName", v)}
               onBlur={() => handleBlur("fullName")}
               error={errors.fullName}
               touched={touched.fullName}
-              autoCapitalize="words"
             />
 
             <CustomInput
               label="อีเมล"
-              placeholder="example@example.com"
-              keyboardType="email-address"
               value={formData.email}
-              onChangeText={(text) => handleChange("email", text)}
+              onChangeText={(v) => handleChange("email", v)}
               onBlur={() => handleBlur("email")}
               error={errors.email}
               touched={touched.email}
-              autoCapitalize="none"
-              autoCorrect={false}
             />
 
             <CustomInput
-              label="เบอร์โทรศัพท์"
-              placeholder="0829717612"
-              keyboardType="phone-pad"
+              label="เบอร์โทร"
               value={formData.phone}
-              onChangeText={(value) => handleChange("phone", value)}
+              onChangeText={(v) => handleChange("phone", v)}
               onBlur={() => handleBlur("phone")}
               error={errors.phone}
               touched={touched.phone}
-              maxLength={10}
             />
+
+            {/* ===== Gender ===== */}
+
+            <Text className="font-medium mt-3 mb-2">เพศ</Text>
+
+            <View className="flex-row justify-between">
+              {["ชาย", "หญิง", "ไม่ระบุ"].map((g) => (
+                <Checkbox
+                  key={g}
+                  label={g}
+                  checked={formData.gender === g}
+                  onPress={() => {
+                    handleChange("gender", g);
+                    handleBlur("gender");
+                  }}
+                />
+              ))}
+            </View>
+
+            {touched.gender && errors.gender && (
+              <Text className="text-red-500 text-sm">
+                {errors.gender}
+              </Text>
+            )}
+
+            {/* ===== Birth Date ===== */}
+
+            <Text className="font-medium mt-4 mb-2">วันเกิด</Text>
+
+            <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+              <View pointerEvents="none">
+                <CustomInput
+                  label=""
+                  placeholder="DD/MM/YYYY"
+                  value={
+                    formData.birthDate
+                      ? formatDate(formData.birthDate)
+                      : ""
+                  }
+                  error={errors.birthDate}
+                  touched={touched.birthDate}
+                />
+              </View>
+            </TouchableOpacity>
 
             <CustomInput
               label="ที่อยู่"
-              placeholder="บ้านเลขที่ ถนน แขวง/ตำบล เขต/อำเภอ จังหวัด"
               value={formData.address}
-              onChangeText={(value) => handleChange("address", value)}
+              onChangeText={(v) => handleChange("address", v)}
               onBlur={() => handleBlur("address")}
               error={errors.address}
               touched={touched.address}
-              multiline={true}
-              maxLength={200}
-              style={{
-                height: 100,
-                textAlignVertical: "top",
-              }}
+              multiline
             />
 
             <CustomInput
               label="รหัสผ่าน"
-              placeholder="อย่างน้อย 6 ตัวอักษร"
+              secureTextEntry
               value={formData.password}
-              onChangeText={(value) => handleChange("password", value)}
+              onChangeText={(v) => handleChange("password", v)}
               onBlur={() => handleBlur("password")}
               error={errors.password}
               touched={touched.password}
-              secureTextEntry
-              autoCapitalize="none"
             />
 
             <CustomInput
               label="ยืนยันรหัสผ่าน"
-              placeholder="ระบุรหัสผ่านอีกครั้ง"
+              secureTextEntry
               value={formData.confirmPassword}
-              onChangeText={(value) =>
-                handleChange("confirmPassword", value)
+              onChangeText={(v) =>
+                handleChange("confirmPassword", v)
               }
               onBlur={() => handleBlur("confirmPassword")}
               error={errors.confirmPassword}
               touched={touched.confirmPassword}
-              secureTextEntry
-              autoCapitalize="none"
             />
 
-            {/* ---------- Checkbox ---------- */}
-
             <Checkbox
-              label="ฉันยอมรับข้อกำหนดและเงื่อนไข"
+              label="ยอมรับเงื่อนไข"
               checked={formData.acceptedTerms}
               onPress={() => {
                 handleChange(
@@ -292,38 +334,37 @@ export default function Index() {
               touched={touched.acceptedTerms}
             />
 
-            {/* ---------- Buttons ---------- */}
-
             <View className="mt-4 space-y-3">
               <CustomButton
                 title="ลงทะเบียน"
                 onPress={handleSubmit}
-                variant="primary"
                 loading={isLoading}
               />
 
               <CustomButton
-                title="รีเซ็ตฟอร์ม"
-                onPress={handleReset}
+                title="รีเซ็ต"
                 variant="secondary"
-                disabled={isLoading}
+                onPress={handleReset}
               />
             </View>
-
-            
-
-            <View className="mt-6 bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
-              <Text className="text-blue-800 font-semibold text-base mb-2">
-                คำแนะนำ
-              </Text>
-              <Text className="text-blue-700 text-sm leading-5">
-                - กรอกข้อมูลให้ครบถ้วน{"\n"}
-                - อีเมลต้องมีรูปแบบที่ถูกต้อง{"\n"}
-                - เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก{"\n"}
-                - รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร{"\n"}
-              </Text>
-            </View>
           </View>
+     
+
+          {showDatePicker && (
+            <DateTimePicker
+              value={formData.birthDate || new Date()}
+              mode="date"
+              maximumDate={new Date()}
+              onChange={(event, selectedDate) => {
+                setShowDatePicker(false);
+
+                if (selectedDate) {
+                  handleChange("birthDate", selectedDate);
+                  handleBlur("birthDate");
+                }
+              }}
+            />
+          )}
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
