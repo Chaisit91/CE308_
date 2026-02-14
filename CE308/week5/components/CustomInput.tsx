@@ -2,37 +2,49 @@ import React from "react";
 import { View, Text, TextInput, TextInputProps } from "react-native";
 
 interface CustomInputProps extends TextInputProps {
-    label: string;
-    error?: string;
-    touched?: boolean;
+  label: string;
+  error?: string;
+  touched?: boolean;
 }
 
 export default function CustomInput({
-    label,
-    error,
-    touched,
-    ...props }: CustomInputProps) {
-    const hasError = touched && error;
-    return (
-        <View className="w-full mb-4">
-            <Text className="text-gray-700 font-semibold mb-2 text-base">
-                {label}
-            </Text>
-            <TextInput
-                className={`
-                w-full px-4 py-3 rounded-lg border-2
-                ${hasError ? "border-red-500" : "border-gray-300"}
-                ${props.editable === false ? "bg-gray-200" : "bg-white"}
-                text-base text-gray-800
-            `}
-                placeholderTextColor={"#9CA3AF"}
-                {...props}
-            />
-            {hasError && (
-                <Text className="text-red-500 text-sm mt-1">
-                    {error}
-                </Text>
-            )}
-        </View>
-    );
+  label,
+  error,
+  touched,
+  ...props
+}: CustomInputProps) {
+  const hasError = touched && error;
+
+  const charCount = props.value ? props.value.toString().length : 0;
+
+  return (
+    <View className="w-full mb-4">
+      <Text className="text-gray-700 font-semibold mb-2 text-base">
+        {label}
+      </Text>
+
+      <TextInput
+        className={`
+          w-full px-4 py-3 rounded-lg border-2
+          ${hasError ? "border-red-500" : "border-gray-300"}
+          ${props.editable === false ? "bg-gray-200" : "bg-white"}
+          text-base text-gray-800
+        `}
+        placeholderTextColor={"#9CA3AF"}
+        {...props}
+      />
+
+      {props.maxLength && (
+        <Text className="text-right text-xs text-gray-400 mt-1">
+          {charCount}/{props.maxLength}
+        </Text>
+      )}
+
+      {hasError && (
+        <Text className="text-red-500 text-sm mt-1">
+          {error}
+        </Text>
+      )}
+    </View>
+  );
 }
