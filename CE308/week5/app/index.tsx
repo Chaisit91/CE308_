@@ -354,7 +354,7 @@ export default function Index() {
               error={errors.Address}
               touched={touched.Address}
               autoCapitalize="none"
-              maxLength={250}
+              maxLength={200}
               style={{ height: 100 }}
               textAlignVertical="top"
             />
