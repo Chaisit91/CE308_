@@ -223,6 +223,7 @@ export default function Index() {
               onChangeText={(v) => handleChange("fullName", v)}
               onBlur={() => handleBlur("fullName")}
               error={errors.fullName}
+              placeholder="ระบุชื่อและนามสกุล"
               touched={touched.fullName}
             />
 
@@ -232,12 +233,14 @@ export default function Index() {
               onChangeText={(v) => handleChange("email", v)}
               onBlur={() => handleBlur("email")}
               error={errors.email}
+              placeholder="example@email.com"
               touched={touched.email}
             />
 
             <CustomInput
               label="เบอร์โทร"
               value={formData.phone}
+              placeholder="0829717612"
               onChangeText={(v) => handleChange("phone", v)}
               onBlur={() => handleBlur("phone")}
               error={errors.phone}
@@ -290,6 +293,7 @@ export default function Index() {
 
             <CustomInput
               label="ที่อยู่"
+              placeholder="กรอกที่อยู่ของผู้ใช้งาน"
               value={formData.address}
               onChangeText={(v) => handleChange("address", v)}
               onBlur={() => handleBlur("address")}
@@ -302,6 +306,7 @@ export default function Index() {
               label="รหัสผ่าน"
               secureTextEntry
               value={formData.password}
+              placeholder="อย่างน้อย 6 ตัวอักษร"
               onChangeText={(v) => handleChange("password", v)}
               onBlur={() => handleBlur("password")}
               error={errors.password}
@@ -312,6 +317,7 @@ export default function Index() {
               label="ยืนยันรหัสผ่าน"
               secureTextEntry
               value={formData.confirmPassword}
+              placeholder="ระบุรหัสผ่านอีกครั้ง"
               onChangeText={(v) =>
                 handleChange("confirmPassword", v)
               }
