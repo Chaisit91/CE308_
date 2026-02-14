@@ -11,57 +11,64 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-
+import CustomInput from "@/components/CustomInput";
+import CustomButton from "@/components/CustomButton";
+import Checkbox from "@/components/Checkbox";
+import CustomRadio from "@/components/CustomRadio";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
-import CustomInput from "../components/CustomInput";
-import CustomButton from "../components/CustomButton";
-import Checkbox from "../components/Checkbox";
-
+// Interface for form state
 interface FormData {
-  fullName: string;
+  fullname: string;
   email: string;
   phone: string;
   password: string;
   confirmPassword: string;
-  address: string;
-  acceptedTerms: boolean;
-  gender: string;
+  Address: string;
+  termsAccepted: boolean;
+  gender?: string;
   birthDate: Date | null;
 }
 
+//Interface for form errors Messages
 interface FormErrors {
-  fullName?: string;
+  fullname?: string;
   email?: string;
   phone?: string;
   password?: string;
   confirmPassword?: string;
-  address?: string;
-  acceptedTerms?: string;
+  Address?: string;
+  termsAccepted?: string;
   gender?: string;
   birthDate?: string;
 }
 
-export default function Index() {
-  const [showDatePicker, setShowDatePicker] = useState(false);
 
+
+export default function Index() {
+  // State for form data
+
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    fullName: "",
+    fullname: "",
     email: "",
     phone: "",
     password: "",
     confirmPassword: "",
-    address: "",
-    acceptedTerms: false,
+    Address: "",
     gender: "",
+    termsAccepted: false,
     birthDate: null,
   });
 
+  // State for form errors Messages
   const [errors, setErrors] = useState<FormErrors>({});
+
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
+
   const [isLoading, setIsLoading] = useState(false);
 
-  // ===== Format Date =====
+
   const formatDate = (date: Date) => {
     const d = date.getDate().toString().padStart(2, "0");
     const m = (date.getMonth() + 1).toString().padStart(2, "0");
@@ -69,54 +76,73 @@ export default function Index() {
     return `${d}/${m}/${y}`;
   };
 
-  // ===== Validation =====
+
   const validateField = (name: string, value: any): string | undefined => {
     switch (name) {
-      case "fullName":
-        if (!value.trim()) return "กรุณากรอกชื่อ-นามสกุล";
-        if (value.trim().length < 3)
+      case "fullname":
+        if (!value.trim()) {
+          return "กรุณากรอกชื่อ-นามสกุล";
+        }
+        if (value.trim().length < 3) {
           return "ชื่อ-นามสกุลต้องมีอย่างน้อย 3 ตัวอักษร";
-        return;
+        }
+        return undefined;
 
       case "email":
+        if (!value.trim()) {
+          return "กรุณากรอกอีเมล";
+        }
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!value.trim()) return "กรุณากรอกอีเมล";
-        if (!emailRegex.test(value.trim()))
+        if (!emailRegex.test(value)) {
           return "รูปแบบอีเมลไม่ถูกต้อง";
-        return;
+        }
+        return undefined;
 
       case "phone":
-        const phoneRegex = /^0[0-9]{9}$/;
-        if (!value.trim()) return "กรุณากรอกเบอร์โทร";
-        if (!phoneRegex.test(value.trim()))
-          return "รูปแบบเบอร์โทรไม่ถูกต้อง";
-        return;
-
-      case "address":
-        if (!value.trim()) return "กรุณากรอกที่อยู่";
-        if (value.trim().length < 10)
-          return "ที่อยู่ต้องมีอย่างน้อย 10 ตัวอักษร";
-        return;
+        if (!value.trim()) {
+          return "กรุณากรอกเบอร์โทรศัพท์";
+        }
+        const phoneRegex = /^[0-9]{10}$/;
+        if (!phoneRegex.test(value)) {
+          return "เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก";
+        }
+        return undefined;
 
       case "password":
-        if (!value.trim()) return "กรุณากรอกรหัสผ่าน";
-        if (value.length < 6)
+        if (!value) {
+          return "กรุณากรอกรหัสผ่าน";
+        }
+        if (value.length < 6) {
           return "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร";
-        return;
+        }
+        return undefined;
 
       case "confirmPassword":
-        if (!value.trim()) return "กรุณายืนยันรหัสผ่าน";
-        if (value !== formData.password) return "รหัสผ่านไม่ตรงกัน";
-        return;
+        if (!value) {
+          return "กรุณากรอกยืนยันรหัสผ่าน";
+        }
+        if (value !== formData.password) {
+          return "รหัสผ่านไม่ตรงกัน";
+        }
+        return undefined;
 
-      case "acceptedTerms":
-        if (!formData.acceptedTerms)
-          return "กรุณายอมรับข้อกำหนด";
-        return;
+      case "Address":
+        if (!value || !String(value).trim()) {
+          return "กรุณากรอกที่อยู่";
+        }
+        if (String(value).trim().length > 250) {
+          return "ที่อยู่ต้องมีความยาวไม่เกิน 250 ตัวอักษร";
+        }
+        return undefined;
 
-      case "gender":
-        if (!value) return "กรุณาเลือกเพศ";
-        return;
+      case "termsAccepted":
+        if (value !== true) {
+          return "คุณต้องยอมรับข้อตกลงและเงื่อนไข";
+        }
+        return undefined;
+
+      default:
+        return undefined;
 
       case "birthDate":
         if (!value) return "กรุณาเลือกวันเกิด";
@@ -134,27 +160,35 @@ export default function Index() {
     }
   };
 
-  const handleChange = (name: keyof FormData, value: any) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const handleChange = (name: keyof FormData, value: string | boolean | Date | null) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
 
     if (touched[name]) {
+      const error = validateField(name, value);
       setErrors((prev) => ({
         ...prev,
-        [name]: validateField(name, value),
+        [name]: error
       }));
     }
   };
 
   const handleBlur = (name: keyof FormData) => {
-    setTouched((prev) => ({ ...prev, [name]: true }));
+    setTouched((prev) => ({
+      ...prev,
+      [name]: true
+    }));
 
+    const error = validateField(name, formData[name]);
     setErrors((prev) => ({
       ...prev,
-      [name]: validateField(name, formData[name]),
+      [name]: error
     }));
   };
 
-  const validateForm = () => {
+  const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     let isValid = true;
 
@@ -168,18 +202,20 @@ export default function Index() {
 
     setErrors(newErrors);
 
-    const allTouched: any = {};
-    Object.keys(formData).forEach((k) => (allTouched[k] = true));
+    const allTouched: { [key: string]: boolean } = {};
+    Object.keys(formData).forEach((key) => {
+      allTouched[key] = true;
+    });
     setTouched(allTouched);
 
     return isValid;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     Keyboard.dismiss();
 
     if (!validateForm()) {
-      Alert.alert("ข้อมูลไม่ถูกต้อง");
+      Alert.alert("ข้อมูลม่ถูกต้อง", "กรุณาตรวจสอบข้อมูลใหม่อีกครั้ง");
       return;
     }
 
@@ -187,23 +223,37 @@ export default function Index() {
 
     setTimeout(() => {
       setIsLoading(false);
-      Alert.alert("ลงทะเบียนสำเร็จ");
-    }, 1500);
+      Alert.alert(
+        "สำเร็จ!",
+        `ลทะเบียนสำเร็จ\n\nชื่อ: ${formData.fullname}\nอีเมล: ${formData.email}\nเบอร์โทรศัพท์: ${formData.phone}`,
+        [
+          {
+            text: "ตรวจสอบ",
+            onPress: () => console.log("From Data:", formData),
+          },
+          {
+            text: "รีเซ็ตฟอร์ม",
+            onPress: handleReset,
+            style: "cancel",
+          },
+        ]
+      );
+    }, 2000);
   };
 
   const handleReset = () => {
     setFormData({
-      fullName: "",
+      fullname: "",
       email: "",
       phone: "",
       password: "",
       confirmPassword: "",
-      address: "",
-      acceptedTerms: false,
+      Address: "",
+      termsAccepted: false,
       gender: "",
       birthDate: null,
-    });
 
+    });
     setErrors({});
     setTouched({});
   };
@@ -211,74 +261,108 @@ export default function Index() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1 bg-white"
+      className="flex-1"
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView className="flex-1 bg-gray-50">
-          <View className="px-6 mt-10">
+        <ScrollView
+          className="flex-1 bg-gray-50"
+          contentContainerClassName="pb-8"
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* Header */}
+          <View className="bg-blue-600 pt-16 pb-8 px-6">
+            <Text className="text-white text-3xl font-bold">
+              ลงทะเบียนสมาชิก
+            </Text>
+            <Text className="text-blue-100 text-base mt-2">
+              กรุณากรอกข้อมูลให้ครบถ้วน
+            </Text>
+          </View>
 
+          {/* Form Container*/}
+          <View className="mt-6 px-6">
+            {/* ชื่อ-นามสกุล */}
             <CustomInput
               label="ชื่อ-นามสกุล"
-              value={formData.fullName}
-              onChangeText={(v) => handleChange("fullName", v)}
-              onBlur={() => handleBlur("fullName")}
-              error={errors.fullName}
               placeholder="ระบุชื่อและนามสกุล"
-              touched={touched.fullName}
+              value={formData.fullname}
+              onChangeText={(value) => handleChange("fullname", value)}
+              onBlur={() => handleBlur("fullname")}
+              error={errors.fullname}
+              touched={touched.fullname}
+              autoCapitalize="words" //ขึ้นต้นด้วยตัวใหญ่ทุกคำ
             />
 
+            {/* อีเมล */}
             <CustomInput
               label="อีเมล"
+              placeholder="example@gmail.com"
               value={formData.email}
-              onChangeText={(v) => handleChange("email", v)}
+              onChangeText={(value) => handleChange("email", value)}
               onBlur={() => handleBlur("email")}
               error={errors.email}
-              placeholder="example@email.com"
               touched={touched.email}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
             />
-
+            {/* เบอร์โทรศัพท์ */}
             <CustomInput
-              label="เบอร์โทร"
+              label="เบอร์โทรศัพท์"
+              placeholder="0854758569"
               value={formData.phone}
-              placeholder="0829717612"
-              onChangeText={(v) => handleChange("phone", v)}
+              onChangeText={(value) => handleChange("phone", value)}
               onBlur={() => handleBlur("phone")}
               error={errors.phone}
               touched={touched.phone}
+              keyboardType="phone-pad"
+              maxLength={10}
+            />
+            {/* รหัสผ่าน */}
+            <CustomInput
+              label="รหัสผ่าน"
+              placeholder="กรุณากรอกรหัสผ่าน (อย่างน้อย 6 ตัว)"
+              secureTextEntry
+              value={formData.password}
+              onChangeText={(value) => handleChange("password", value)}
+              onBlur={() => handleBlur("password")}
+              error={errors.password}
+              touched={touched.password}
+              autoCapitalize="none"
             />
 
-            {/* ===== Gender ===== */}
-
-            <Text className="font-medium mt-3 mb-2">เพศ</Text>
-
-            <View className="flex-row justify-between">
-              {["ชาย", "หญิง", "ไม่ระบุ"].map((g) => (
-                <Checkbox
-                  key={g}
-                  label={g}
-                  checked={formData.gender === g}
-                  onPress={() => {
-                    handleChange("gender", g);
-                    handleBlur("gender");
-                  }}
-                />
-              ))}
-            </View>
-
-            {touched.gender && errors.gender && (
-              <Text className="text-red-500 text-sm">
-                {errors.gender}
-              </Text>
-            )}
-
-            {/* ===== Birth Date ===== */}
-
-            <Text className="font-medium mt-4 mb-2">วันเกิด</Text>
+            {/* ยืนยันรหัสผ่าน */}
+            <CustomInput
+              label="ยืนยันรหัสผ่าน"
+              placeholder="กรุณากรอกยืนยันรหัสผ่าน"
+              secureTextEntry
+              value={formData.confirmPassword}
+              onChangeText={(value) => handleChange("confirmPassword", value)}
+              onBlur={() => handleBlur("confirmPassword")}
+              error={errors.confirmPassword}
+              touched={touched.confirmPassword}
+              autoCapitalize="none"
+            />
+            {/* ที่อยู่ */}
+            <CustomInput
+              label="ที่อยู่"
+              placeholder="กรุณากรอกที่อยู่(ไม่เกิน 250 ตัวอักษร)"
+              value={formData.Address}
+              onChangeText={(value) => handleChange("Address", value)}
+              onBlur={() => handleBlur("Address")}
+              error={errors.Address}
+              touched={touched.Address}
+              autoCapitalize="none"
+              maxLength={250}
+              style={{ height: 100 }}
+              textAlignVertical="top"
+            />
 
             <TouchableOpacity onPress={() => setShowDatePicker(true)}>
               <View pointerEvents="none">
                 <CustomInput
-                  label=""
+                  label="วันกิด"
                   placeholder="DD/MM/YYYY"
                   value={
                     formData.birthDate
@@ -291,70 +375,58 @@ export default function Index() {
               </View>
             </TouchableOpacity>
 
-            <CustomInput
-              label="ที่อยู่"
-              placeholder="กรอกที่อยู่ของผู้ใช้งาน"
-              value={formData.address}
-              onChangeText={(v) => handleChange("address", v)}
-              onBlur={() => handleBlur("address")}
-              error={errors.address}
-              touched={touched.address}
-              multiline
+            <CustomRadio
+              label="เพศ"
+              options={[
+                { label: "ชาย", value: "male" },
+                { label: "หญิง", value: "female" },
+                { label: "ไม่ระบุ", value: "other" },
+              ]}
+              value={formData.gender}
+              onChange={(value: string) => handleChange("gender", value)}
+              error={errors.gender}
+              touched={touched.gender}
             />
 
-            <CustomInput
-              label="รหัสผ่าน"
-              secureTextEntry
-              value={formData.password}
-              placeholder="อย่างน้อย 6 ตัวอักษร"
-              onChangeText={(v) => handleChange("password", v)}
-              onBlur={() => handleBlur("password")}
-              error={errors.password}
-              touched={touched.password}
-            />
-
-            <CustomInput
-              label="ยืนยันรหัสผ่าน"
-              secureTextEntry
-              value={formData.confirmPassword}
-              placeholder="ระบุรหัสผ่านอีกครั้ง"
-              onChangeText={(v) =>
-                handleChange("confirmPassword", v)
-              }
-              onBlur={() => handleBlur("confirmPassword")}
-              error={errors.confirmPassword}
-              touched={touched.confirmPassword}
-            />
 
             <Checkbox
-              label="ยอมรับเงื่อนไข"
-              checked={formData.acceptedTerms}
-              onPress={() => {
-                handleChange(
-                  "acceptedTerms",
-                  !formData.acceptedTerms
-                );
-                handleBlur("acceptedTerms");
-              }}
-              error={errors.acceptedTerms}
-              touched={touched.acceptedTerms}
+              label="ยอมรับข้อตกลงและเงื่อนไข"
+              checked={formData.termsAccepted}
+              onPress={(value: boolean) => handleChange("termsAccepted", value)}
+              error={errors.termsAccepted}
+              touched={touched.termsAccepted}
             />
 
+            {/* Button */}
             <View className="mt-4 space-y-3">
               <CustomButton
                 title="ลงทะเบียน"
                 onPress={handleSubmit}
+                variant="Primary"
                 loading={isLoading}
               />
 
               <CustomButton
-                title="รีเซ็ต"
-                variant="secondary"
+                title="รีเซ็ตฟอร์ม"
                 onPress={handleReset}
+                variant="Secondary"
+                disabled={isLoading}
               />
             </View>
+
+            <View className="mt-6 bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
+              <Text className="text-blue-800 font-semibold mb-2">
+                คำแนะนำ
+              </Text>
+              <Text className="text-blue-700 text-sm leading-5">
+                -กรอกข้อมูลให้ครบถ้วน{"\n"}
+                -อีเมลต้องมีรูปแบบที่ถูกต้อง{"\n"}
+                -เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก{"\n"}
+                -รหัสผ่านต้องมีอย่างน้อย 6 ตัว{"\n"}
+                -ที่อยู่ต้องมีความยาวไม่เกิน 250 ตัวอักษร{"\n"}
+              </Text>
+            </View>
           </View>
-     
 
           {showDatePicker && (
             <DateTimePicker

@@ -1,42 +1,42 @@
 import React from "react";
-import { TouchableOpacity, Text, TouchableOpacityProps, ActivityIndicator } from "react-native";
-
+import { TouchableOpacity , Text, ActivityIndicator } from "react-native";
 
 interface CustomButtonProps {
-    title: string;
-    onPress: () => void;
-    variant?: "primary" | "secondary" | "danger";
-    disabled?: boolean;
-    loading?: boolean;
-    
+  title: string;
+  onPress: () => void;
+  variant?: "Primary" | "Secondary" | "Danger";
+  disabled?: boolean;
+  loading?: boolean;
 }
 
 export default function CustomButton({
-    title,
-    onPress,
-    variant = "primary",
-    disabled = false,
-    loading = false,
+  title,
+  onPress,
+  variant = "Primary",
+  disabled = false,
+  loading = false,
 }: CustomButtonProps) {
     const getVariantStyles = () => {
         if (disabled) {
             return "bg-gray-300";
         }
+
         switch (variant) {
-            case "primary":
+            case "Primary":
                 return "bg-blue-600 active:bg-blue-700";
-            case "secondary":
+            case "Secondary":
                 return "bg-gray-600 active:bg-gray-700";
-            case "danger":
+            case "Danger":
                 return "bg-red-600 active:bg-red-700";
             default:
                 return "bg-blue-600 active:bg-blue-700";
         }
     };
+
     return (
         <TouchableOpacity
-            className={`
-                w-full px-6 py-4 rounded-lg
+            className = {`
+                w-full py-6 rounded-lg
                 ${getVariantStyles()}
                 flex-row justify-center items-center
             `}
@@ -44,13 +44,13 @@ export default function CustomButton({
             disabled={disabled || loading}
             activeOpacity={0.8}
         >
-        {loading ? (
-            <ActivityIndicator  color="White"/>
-        ) : (
+            {loading ? (
+                <ActivityIndicator color="white"/>
+            ) : (
                 <Text className="text-white font-bold text-lg">
                     {title}
                 </Text>
-        )}
+            )}
         </TouchableOpacity>
-     );
+    );
 }
