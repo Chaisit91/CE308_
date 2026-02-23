@@ -6,19 +6,19 @@ export default function TabLayout() {
     return (
         <Tabs
             screenOptions={{
-                tabBarActiveTintColor: '#4F46E5', // สีม่วงเข้มสำหรับไอคอนที่เลือก
-                tabBarInactiveTintColor: '#9CA3AF', // สีเทาสำหรับไอคอนที่ไม่ถูกเลือก
+                tabBarActiveTintColor: '#FF6600',
+                tabBarInactiveTintColor: '#9CA3AF',
                 tabBarStyle: {
-                    height: Platform.OS === 'ios' ? 85 : 65, // ปรับความสูงของ tab bar ตามแพลตฟอร์ม
-                    paddingBottom: Platform.OS === 'ios' ? 25 : 10, // ปรับ padding ด้านล่างตามแพลตฟอร์ม
-                    paddingTop: 10, // เพิ่ม padding ด้านบน
+                    height: Platform.OS === 'ios' ? 85 : 65,
+                    paddingBottom: Platform.OS === 'ios' ? 25 : 10,
+                    paddingTop: 10,
                 },
                 tabBarLabelStyle: {
-                    fontSize: 12, 
+                    fontSize: 12,
                     fontWeight: '600',
                 },
                 headerStyle: {
-                    backgroundColor: '#4F46E5',
+                    backgroundColor: '#FF6600',
                 },
                 headerTintColor: '#FFFFFF',
                 headerTitleStyle: {
@@ -30,31 +30,34 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="index"
                 options={{
-                    title: 'หน้าหลัก',
+                    title: 'Home',
+                    headerTitle: 'Markets', 
                     tabBarIcon: ({ color, size, focused }) => (
-                        <Ionicons 
-                        name={focused ? 'home' : 'home-outline'} // เปลี่ยนไอคอนเมื่อถูกเลือก
-                        size={size} 
-                        color={color} 
+                        <Ionicons
+                            name={focused ? 'home' : 'home-outline'}
+                            size={size}
+                            color={color}
                         />
                     ),
                 }}
             />
+
             <Tabs.Screen
                 name="profile"
                 options={{
-                    title: 'โปรไฟล์',
+                    title: 'Profile',       
+                    headerTitle: 'My Profile', 
                     tabBarIcon: ({ color, size, focused }) => (
-                        <Ionicons 
-                        name={focused ? 'person' : 'person-outline'} // เปลี่ยนไอคอนเมื่อถูกเลือก 
-                        size={size} 
-                        color={color} 
+                        <Ionicons
+                            name={focused ? 'person' : 'person-outline'}
+                            size={size}
+                            color={color}
                         />
                     ),
                 }}
             />
         </Tabs>
+
+    
     );
 }
-
-
