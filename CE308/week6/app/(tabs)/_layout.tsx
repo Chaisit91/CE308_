@@ -8,14 +8,16 @@ export default function TabLayout() {
             screenOptions={{
                 tabBarActiveTintColor: '#FF6600',
                 tabBarInactiveTintColor: '#9CA3AF',
+                 tabBarLabelPosition: 'below-icon',
                 tabBarStyle: {
                     height: Platform.OS === 'ios' ? 85 : 65,
                     paddingBottom: Platform.OS === 'ios' ? 25 : 10,
-                    paddingTop: 10,
+                    paddingTop: 1,
                 },
                 tabBarLabelStyle: {
                     fontSize: 12,
                     fontWeight: '600',
+                    
                 },
                 headerStyle: {
                     backgroundColor: '#FF6600',

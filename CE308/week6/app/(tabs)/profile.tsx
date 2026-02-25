@@ -5,12 +5,10 @@ export default function Profile() {
   return (
     <View style={styles.container}>
       
-      <View style={styles.avatar}>
-        <Ionicons name="person" size={60} color="#FFFFFF" />
-      </View>
+      <View style={styles.avatar} /> 
 
-      <Text style={styles.name}>ชื่อผู้ใช้</Text>
-      <Text style={styles.email}>user@example.com</Text>
+      <Text style={styles.name}>Chaisit</Text>
+      <Text style={styles.email}>chaisit@gmail.com</Text>
 
     </View>
   );
@@ -27,7 +25,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: '#6366F1',
+    backgroundColor: '#D1D5DB',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,

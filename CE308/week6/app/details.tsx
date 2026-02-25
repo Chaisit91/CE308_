@@ -7,7 +7,7 @@ const products = [
     name: 'Premium Coffee Bean',
     price: '฿450',
     description:
-      'เมล็ดกาแฟเกรดพรีเมียม คั่วกลาง หอมเข้ม รสชาตินุ่มลึก เหมาะสำหรับคอกาแฟตัวจริง',
+      'เมล็ดกาแฟคั่วกลางจากดอยช้าง',
   },
   {
     id: '2',
@@ -26,7 +26,7 @@ const products = [
 ];
 
 export default function DetailsScreen() {
-  const { id } = useLocalSearchParams();   // ✅ รับ id
+  const { id } = useLocalSearchParams();   
 
   const product = products.find((item) => item.id === id);
 
