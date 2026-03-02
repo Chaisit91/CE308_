@@ -1,15 +1,20 @@
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View} from 'react-native';
+import { useRouter } from 'expo-router';
 
-export default function Index() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
+
+export default function HomeScreen(){
+  const router = useRouter();
+
+  return(
+    <View className="flex-1 items-center justify-center gap-4">
+      <Text className="text-3xl font-bold">Book Store</Text>
+      <Text className="text-blue-600 text-base">Manage your book collection</Text>
+      <TouchableOpacity
+      className="bg-white px-8 py-3 rounded-full mt-4"
+      onPress={()=> router.push('/boosk')}
+      >
+        <Text className="text-blue-600 font-bold text-lg"> Go to books</Text>
+      </TouchableOpacity>
     </View>
   );
 }
