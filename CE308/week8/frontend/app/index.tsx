@@ -11,7 +11,7 @@ export default function HomeScreen(){
       <Text className="text-blue-600 text-base">Manage your book collection</Text>
       <TouchableOpacity
       className="bg-white px-8 py-3 rounded-full mt-4"
-      onPress={()=> router.push('/boosk')}
+      onPress={()=> router.push('./books')}
       >
         <Text className="text-blue-600 font-bold text-lg"> Go to books</Text>
       </TouchableOpacity>
